@@ -1,0 +1,98 @@
+---
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{\vspace{-1.77cm}\begin{center}\Large}
+  - \posttitle{\end{center}}
+title: |
+  | dPsi Data Analysis
+author: "Emily Zhao"
+geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
+fontsize: 11pt
+date: "2024-03-27"
+output:
+  pdf_document:
+    includes:
+      in_header: header.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = TRUE, message = TRUE, echo = TRUE)
+```
+
+
+```{r}
+
+library(tidyverse)
+library(data.table)
+library(ggplot2)
+library(purrr)
+library(dplyr)
+library(nlme)
+
+```
+
+```{r}
+
+load("~/projects/mitochondria/data/metabolicAssay.RData")
+
+
+dPsi <- dPsi[dPsi$dose != -12.95, ]
+
+
+missing_y <- sum(is.na(dPsi$y))
+
+```
+
+```{r}
+ggplot(dPsi, aes(x = dose, y = y, color = substrate)) +
+  geom_point() +
+  labs(x = "Dose", y = "dPsi",
+       title = "Scatterplot of dPsi vs. Dose")
+```
+
+
+
+
+```{r}
+
+dPsi_GM <- subset(dPsi, substrate == "GM")
+
+# pop.mod <- nls(y~a(c-(c-1)*exp(dose/b))),
+# + start=list(theta1 = 400, theta2 = -49, theta3 = 0.025),
+# + data=dPsi_Tg1, trace=TRUE)
+# 
+# 
+# pop.mod <- nls(y~a(c-(c-1)*exp(dose/b))),
+# + start=list(theta1 = 400, theta2 = -49, theta3 = 0.025),
+# + data=dPsi_Tg1, trace=TRUE)
+
+```
+
+```{r}
+# pop.mod <- nls(y ~ SSlogis(dose, phi1, phi2, phi3), data = dPsi_Tg1)
+```
+
+
+```{r}
+
+ggplot(dPsi_GM, aes(x = dose, y = y, color = geno)) +
+  geom_point() +
+  labs(x = "Dose", y = "dPsi",
+       title = "Scatterplot of dPsi vs. Dose for substrate GM")
+```
+
+
+```{r}
+library(lme4)
+```
+
+
+```{r}
+
+model <- lmer(y ~ geno*dose + (1|pair), data = dPsi_GM)
+
+summary(model)
+
+
+```
+
