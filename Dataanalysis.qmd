@@ -38,8 +38,9 @@ load("~/projects/mitochondria/data/metabolicAssay.RData")
 
 dPsi <- dPsi[dPsi$dose != -12.95, ]
 
+dPsi <- dPsi[!is.na(dPsi$y), ]
 
-missing_y <- sum(is.na(dPsi$y))
+
 
 ```
 
@@ -56,6 +57,8 @@ ggplot(dPsi, aes(x = dose, y = y, color = substrate)) +
 ```{r}
 
 dPsi_GM <- subset(dPsi, substrate == "GM")
+dPsi_GM <- subset(dPsi, substrate == "PM")
+
 
 # pop.mod <- nls(y~a(c-(c-1)*exp(dose/b))),
 # + start=list(theta1 = 400, theta2 = -49, theta3 = 0.025),
@@ -89,14 +92,67 @@ library(lme4)
 
 ```{r}
 
-model <- lmer(y ~ geno:dose + (1|pair), data = dPsi_GM)
+model_GM <- lmer(y ~ geno:dose + (1|pair), data = dPsi_GM)
 
+#model_PM <- lmer(y ~ geno:dose + (1|pair), data = dPsi_PM)
 
-summary(model)
+summary(model_GM)
 
 model2 <- lmer(y ~ geno:dose:substrate + (1|pair), data = dPsi)
 
 summary(model2)
 
+library(car)
+
+
+
+```
+
+```{r}
+# Assuming 'dPsi' is your dataframe
+
+fixed_effects <- fixef(model2)
+
+
+ggplot(data = dPsi, aes(x = dose, y = y, color = geno)) +
+  geom_point() +
+  facet_wrap(~substrate)+
+  geom_smooth(method = "lm", se = FALSE) +  # Add linear trend lines
+  labs(x = "Dose", y = "y", title = "Scatterplot by Substrate with Trend Lines") +
+  theme_minimal()
+
+```
+
+```{r}
+plot(model2)
+
+```
+
+# 
+```{r}
+model3 <- lmer(y~substrate:poly(dose,2):geno + (1|pair), data = dPsi)
+
+summary(model3)
+```
+
+```{r}
+plot(model3)
+```
+
+
+```{r}
+library(mgcv)
+
+dPsi$dose <- as.numeric(dPsi$dose)
+dPsi$substrate <- as.factor(dPsi$substrate)
+dPsi$geno <- as.factor(dPsi$geno)
+
+gam_model <- gam(y ~ dose:substrate:geno + s(pair, bs = "re"), data = dPsi)
+
+summary(gam_model)
+```
+
+```{r}
+plot(gam_model)
 ```
 
