@@ -89,10 +89,14 @@ library(lme4)
 
 ```{r}
 
-model <- lmer(y ~ geno*dose + (1|pair), data = dPsi_GM)
+model <- lmer(y ~ geno:dose + (1|pair), data = dPsi_GM)
+
 
 summary(model)
 
+model2 <- lmer(y ~ geno:dose:substrate + (1|pair), data = dPsi)
+
+summary(model2)
 
 ```
 
