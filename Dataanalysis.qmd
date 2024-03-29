@@ -156,3 +156,26 @@ summary(gam_model)
 plot(gam_model)
 ```
 
+
+```{r}
+
+# Provide initial parameter estimates
+initial_params <- list(a = 170, b = 120, c = -14.19, d = 6)
+
+# not working, either if there's initial params or removed, nothing is working
+# Fit the model with initial parameter estimates
+self_start_model <- nls(as.numeric(y) ~ SSfpl(as.numeric(dose), a, b, c, d)|geno, data = dPsi_GM, start = initial_params)
+
+
+
+selfstartmodel1 <- nls(y~SSgompertz(as.numeric(dose), Asym=170, b2, b3)|geno, data=dPsi_GM)
+
+
+```
+plot(density ~ log(conc), DNase.1, # xlim = c(0, 21),
+     main = "SSgompertz() fit to DNase.1")
+ux <- par("usr")[1:2]; x <- seq(ux[1], ux[2], length.out=250)
+lines(x, do.call(SSgompertz, c(list(x=x), coef(fm1))), col = "red", lwd=2)
+As <- coef(fm1)[["Asym"]]; abline(v = 0, h = 0, lty = 3)
+axis(2, at= exp(-coef(fm1)[["b2"]]), quote(e^{-b[2]}), las=1, pos=0)
+
