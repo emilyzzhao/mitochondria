@@ -9,7 +9,7 @@
 <meta name="author" content="Emily Zhao">
 <meta name="dcterms.date" content="2024-03-27">
 
-<title>quarto-input3cb87129</title>
+<title>quarto-input1c12dfb8</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -115,10 +115,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.4     ✔ readr     2.1.5
-✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.0     ✔ tibble    3.2.1
-✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ dplyr     1.1.3     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
 ✔ purrr     1.0.2     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
@@ -157,13 +157,16 @@ The following object is masked from 'package:dplyr':
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"~/projects/mitochondria/data/metabolicAssay.RData"</span>)</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load("~/projects/mitochondria/data/metabolicAssay.RData")</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>dPsi <span class="ot">&lt;-</span> dPsi[dPsi<span class="sc">$</span>dose <span class="sc">!=</span> <span class="sc">-</span><span class="fl">12.95</span>, ]</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>dPsi <span class="ot">&lt;-</span> dPsi[<span class="sc">!</span><span class="fu">is.na</span>(dPsi<span class="sc">$</span>y), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"~/OneDrive - Duke University/* SPRING 2024/STA 470S/mitochondria/data/metabolicAssay.RData"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>dPsi <span class="ot">&lt;-</span> dPsi[dPsi<span class="sc">$</span>dose <span class="sc">!=</span> <span class="sc">-</span><span class="fl">12.95</span>, ]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>dPsi <span class="ot">&lt;-</span> dPsi[<span class="sc">!</span><span class="fu">is.na</span>(dPsi<span class="sc">$</span>y), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="visualizations" class="level3">
+<h3 class="anchored" data-anchor-id="visualizations">Visualizations</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dPsi, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y, <span class="at">color =</span> substrate)) <span class="sc">+</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
@@ -223,73 +226,82 @@ Attaching package: 'lme4'</code></pre>
     lmList</code></pre>
 </div>
 </div>
+</section>
+<section id="model-specifications" class="level3">
+<h3 class="anchored" data-anchor-id="model-specifications">Model specifications</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>model_GM <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> geno<span class="sc">:</span>dose <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi_GM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> dose<span class="sc">:</span>substrate <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>fixed-effect model matrix is rank deficient so dropping 1 column / coefficient</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#model_PM &lt;- lmer(y ~ geno:dose + (1|pair), data = dPsi_PM)</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_GM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
-Formula: y ~ geno:dose + (1 | pair)
-   Data: dPsi_GM
+Formula: y ~ dose:substrate + (1 | pair)
+   Data: dPsi
 
-REML criterion at convergence: 244.7
+REML criterion at convergence: 1979.7
 
 Scaled residuals: 
      Min       1Q   Median       3Q      Max 
--1.59717 -0.75479  0.03124  0.72695  1.91253 
+-2.67675 -0.50306 -0.00011  0.50161  2.96035 
 
 Random effects:
  Groups   Name        Variance Std.Dev.
- pair     (Intercept) 8.667    2.944   
- Residual             3.995    1.999   
-Number of obs: 60, groups:  pair, 6
+ pair     (Intercept)  1.96    1.400   
+ Residual             21.98    4.688   
+Number of obs: 350, groups:  pair, 6
 
 Fixed effects:
-                  Estimate Std. Error t value
-(Intercept)       150.2626     1.4527 103.435
-genoNT:dose-13.65 -14.7339     1.1540 -12.767
-genoTg:dose-13.65 -11.9159     1.1540 -10.325
-genoNT:dose-13.95 -10.8640     1.1540  -9.414
-genoTg:dose-13.95  -6.3868     1.1540  -5.534
-genoNT:dose-14.19  -8.7869     1.1540  -7.614
-genoTg:dose-14.19  -2.5835     1.1540  -2.239
-genoNT:dose-14.36  -7.3348     1.1540  -6.356
-genoTg:dose-14.36  -0.9068     1.1540  -0.786
-genoNT:dose-14.49  -6.7049     1.1540  -5.810
-
-Correlation of Fixed Effects:
-            (Intr) gNT:-13.6 gT:-13.6 gNT:-13.9 gT:-13.9 gNT:-14.1 gT:-14.1
-gnNT:-13.65 -0.397                                                         
-gnTg:-13.65 -0.397  0.500                                                  
-gnNT:-13.95 -0.397  0.500     0.500                                        
-gnTg:-13.95 -0.397  0.500     0.500    0.500                               
-gnNT:-14.19 -0.397  0.500     0.500    0.500     0.500                     
-gnTg:-14.19 -0.397  0.500     0.500    0.500     0.500    0.500            
-gnNT:-14.36 -0.397  0.500     0.500    0.500     0.500    0.500     0.500  
-gnTg:-14.36 -0.397  0.500     0.500    0.500     0.500    0.500     0.500  
-gnNT:-14.49 -0.397  0.500     0.500    0.500     0.500    0.500     0.500  
-            gNT:-14.3 gT:-14.3
-gnNT:-13.65                   
-gnTg:-13.65                   
-gnNT:-13.95                   
-gnTg:-13.95                   
-gnNT:-14.19                   
-gnTg:-14.19                   
-gnNT:-14.36                   
-gnTg:-14.36  0.500            
-gnNT:-14.49  0.500     0.500  
-fit warnings:
+                         Estimate Std. Error t value
+(Intercept)              143.5311     1.4691  97.701
+dose-13.65:substrateGM    -3.1162     1.9139  -1.628
+dose-13.95:substrateGM     2.9616     1.9139   1.547
+dose-14.19:substrateGM     6.8163     1.9139   3.561
+dose-14.36:substrateGM     9.1342     1.9139   4.772
+dose-14.49:substrateGM    10.2683     1.9139   5.365
+dose-13.65:substratePM    -6.5934     1.9139  -3.445
+dose-13.95:substratePM    -1.8939     1.9139  -0.990
+dose-14.19:substratePM     1.0463     1.9139   0.547
+dose-14.36:substratePM     2.6107     1.9139   1.364
+dose-14.49:substratePM     3.3791     1.9139   1.766
+dose-13.65:substratePcM  -13.5977     2.0103  -6.764
+dose-13.95:substratePcM  -13.2039     2.0103  -6.568
+dose-14.19:substratePcM  -13.6389     2.0103  -6.784
+dose-14.36:substratePcM  -13.0999     2.0103  -6.516
+dose-14.49:substratePcM  -12.8173     2.0103  -6.376
+dose-13.65:substratePMPc  -3.6128     1.9139  -1.888
+dose-13.95:substratePMPc   1.8188     1.9139   0.950
+dose-14.19:substratePMPc   4.9527     1.9139   2.588
+dose-14.36:substratePMPc   6.6713     1.9139   3.486
+dose-14.49:substratePMPc   7.2273     1.9139   3.776
+dose-13.65:substratePMOc  -4.2979     1.9139  -2.246
+dose-13.95:substratePMOc   0.5641     1.9139   0.295
+dose-14.19:substratePMOc   4.8555     1.9139   2.537
+dose-14.36:substratePMOc   7.2839     1.9139   3.806
+dose-14.49:substratePMOc   8.5678     1.9139   4.477
+dose-13.65:substrateOcM  -13.5316     1.9139  -7.070
+dose-13.95:substrateOcM   -8.0364     1.9139  -4.199
+dose-14.19:substrateOcM   -4.3175     1.9139  -2.256
+dose-14.36:substrateOcM   -1.7533     1.9139  -0.916</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Correlation matrix not shown by default, as p = 30 &gt; 12.
+Use print(x, correlation=TRUE)  or
+    vcov(x)        if you need it</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>fit warnings:
 fixed-effect model matrix is rank deficient so dropping 1 column / coefficient</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> geno<span class="sc">:</span>dose<span class="sc">:</span>substrate <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> geno<span class="sc">:</span>dose<span class="sc">:</span>substrate <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>fixed-effect model matrix is rank deficient so dropping 1 column / coefficient</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: y ~ geno:dose:substrate + (1 | pair)
@@ -380,7 +392,7 @@ Use print(x, correlation=TRUE)  or
 <pre><code>fit warnings:
 fixed-effect model matrix is rank deficient so dropping 1 column / coefficient</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Loading required package: carData</code></pre>
 </div>
@@ -400,17 +412,17 @@ Attaching package: 'car'</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'dPsi' is your dataframe</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>fixed_effects <span class="ot">&lt;-</span> <span class="fu">fixef</span>(model2)</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dPsi, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y, <span class="at">color =</span> geno)) <span class="sc">+</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>substrate)<span class="sc">+</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>  <span class="co"># Add linear trend lines</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Dose"</span>, <span class="at">y =</span> <span class="st">"y"</span>, <span class="at">title =</span> <span class="st">"Scatterplot by Substrate with Trend Lines"</span>) <span class="sc">+</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming 'dPsi' is your dataframe</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>fixed_effects <span class="ot">&lt;-</span> <span class="fu">fixef</span>(model2)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dPsi, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y, <span class="at">color =</span> geno)) <span class="sc">+</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>substrate)<span class="sc">+</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>  <span class="co"># Add linear trend lines</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Dose"</span>, <span class="at">y =</span> <span class="st">"y"</span>, <span class="at">title =</span> <span class="st">"Scatterplot by Substrate with Trend Lines"</span>) <span class="sc">+</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -419,17 +431,18 @@ Attaching package: 'car'</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Dataanalysis_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
 <section id="section" class="level1">
 <h1></h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y<span class="sc">~</span>substrate<span class="sc">:</span><span class="fu">poly</span>(dose,<span class="dv">2</span>)<span class="sc">:</span>geno <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y<span class="sc">~</span>substrate<span class="sc">:</span><span class="fu">poly</span>(dose,<span class="dv">2</span>)<span class="sc">:</span>geno <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Linear mixed model fit by REML ['lmerMod']
 Formula: y ~ substrate:poly(dose, 2):geno + (1 | pair)
@@ -483,23 +496,147 @@ Use print(x, correlation=TRUE)  or
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="Dataanalysis_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>This is mgcv 1.9-1. For overview type 'help("mgcv-package")'.</code></pre>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> substrate<span class="sc">:</span><span class="fu">poly</span>(dose,<span class="dv">2</span>) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>pair), <span class="at">data =</span> dPsi)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: y ~ -1 + substrate:poly(dose, 2) + (1 | pair)
+   Data: dPsi
+
+REML criterion at convergence: 2383.7
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.0346 -0.6098  0.1929  0.7100  2.2724 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ pair     (Intercept) 20381.9  142.765 
+ Residual                60.5    7.778 
+Number of obs: 350, groups:  pair, 6
+
+Fixed effects:
+                             Estimate Std. Error t value
+substrateGM:poly(dose, 2)1     87.155     18.786   4.639
+substratePM:poly(dose, 2)1     64.688     18.786   3.443
+substratePcM:poly(dose, 2)1     4.405     20.579   0.214
+substratePMPc:poly(dose, 2)1   70.199     18.786   3.737
+substratePMOc:poly(dose, 2)1   85.858     18.786   4.570
+substrateOcM:poly(dose, 2)1    88.226     18.786   4.696
+substrateGM:poly(dose, 2)2    -25.546     18.786  -1.360
+substratePM:poly(dose, 2)2    -20.657     18.786  -1.100
+substratePcM:poly(dose, 2)2     1.681     20.579   0.082
+substratePMPc:poly(dose, 2)2  -24.969     18.786  -1.329
+substratePMOc:poly(dose, 2)2  -20.167     18.786  -1.074
+substrateOcM:poly(dose, 2)2   -19.316     18.786  -1.028
+
+Correlation of Fixed Effects:
+                sGM:(,2)1 sbstrtPM:p(,2)1 sbstrtPcM:(,2)1 sPMP:(,2)1 sPMO:(,2)1
+sbstrtPM:p(,2)1 0.000                                                          
+sbstrtPcM:(,2)1 0.000     0.000                                                
+sbPMP:(,2)1     0.000     0.000           0.000                                
+sbPMO:(,2)1     0.000     0.000           0.000           0.000                
+sbsOM:(,2)1     0.000     0.000           0.000           0.000      0.000     
+sbsGM:(,2)2     0.000     0.000           0.000           0.000      0.000     
+sbstrtPM:p(,2)2 0.000     0.000           0.000           0.000      0.000     
+sbstrtPcM:(,2)2 0.000     0.000           0.000           0.000      0.000     
+sbPMP:(,2)2     0.000     0.000           0.000           0.000      0.000     
+sbPMO:(,2)2     0.000     0.000           0.000           0.000      0.000     
+sbsOM:(,2)2     0.000     0.000           0.000           0.000      0.000     
+                sOM:(,2)1 sGM:(,2)2 sbstrtPM:p(,2)2 sbstrtPcM:(,2)2 sPMP:(,2)2
+sbstrtPM:p(,2)1                                                               
+sbstrtPcM:(,2)1                                                               
+sbPMP:(,2)1                                                                   
+sbPMO:(,2)1                                                                   
+sbsOM:(,2)1                                                                   
+sbsGM:(,2)2     0.000                                                         
+sbstrtPM:p(,2)2 0.000     0.000                                               
+sbstrtPcM:(,2)2 0.000     0.000     0.000                                     
+sbPMP:(,2)2     0.000     0.000     0.000           0.000                     
+sbPMO:(,2)2     0.000     0.000     0.000           0.000           0.000     
+sbsOM:(,2)2     0.000     0.000     0.000           0.000           0.000     
+                sPMO:(,2)2
+sbstrtPM:p(,2)1           
+sbstrtPcM:(,2)1           
+sbPMP:(,2)1               
+sbPMO:(,2)1               
+sbsOM:(,2)1               
+sbsGM:(,2)2               
+sbstrtPM:p(,2)2           
+sbstrtPcM:(,2)2           
+sbPMP:(,2)2               
+sbPMO:(,2)2               
+sbsOM:(,2)2     0.000     </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>dose <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dPsi<span class="sc">$</span>dose)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>substrate <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dPsi<span class="sc">$</span>substrate)</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>geno <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dPsi<span class="sc">$</span>geno)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>gam_model <span class="ot">&lt;-</span> <span class="fu">gam</span>(y <span class="sc">~</span> dose<span class="sc">:</span>substrate<span class="sc">:</span>geno <span class="sc">+</span> <span class="fu">s</span>(pair, <span class="at">bs =</span> <span class="st">"re"</span>), <span class="at">data =</span> dPsi)</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gam_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="pbkr" class="level3">
+<h3 class="anchored" data-anchor-id="pbkr">pbkr</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load package</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pbkrtest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Model 1 vs.&nbsp;Model 2: model 2 wins</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood ratio test</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>lrt_result_12 <span class="ot">&lt;-</span> <span class="fu">KRmodcomp</span>(model2, model1)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>lrt_result_12</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>large : y ~ geno:dose:substrate + (1 | pair)
+small : y ~ dose:substrate + (1 | pair)
+          stat      ndf      ddf F.scaling   p.value    
+Ftest   5.3331  30.0000 285.0004         1 6.451e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><p>difference in # of parameters between models (ndf) = 10</p></li>
+<li><p>p-value = &lt; 2.2e-16</p>
+<ul>
+<li>highly significant -&gt; inclusion of geno term significantly improves fit of model over model1</li>
+</ul></li>
+</ul>
+<p>Model 3 vs.&nbsp;Model 4: model 3 wins</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>lrt_result_34 <span class="ot">&lt;-</span> <span class="fu">KRmodcomp</span>(model4, model3)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>lrt_result_34</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>large : y ~ substrate:poly(dose, 2):geno + (1 | pair)
+small : y ~ -1 + substrate:poly(dose, 2) + (1 | pair)
+         stat     ndf     ddf F.scaling   p.value    
+Ftest 2525.03   13.00  164.61   0.97529 &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li><p>p-value = &lt; 2.2e-16</p>
+<ul>
+<li>highly significant -&gt; inclusion of gennotype term significantly improves fit of model over model1</li>
+</ul></li>
+</ul>
+</section>
+<section id="gam" class="level3">
+<h3 class="anchored" data-anchor-id="gam">GAM</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>This is mgcv 1.9-0. For overview type 'help("mgcv-package")'.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>dose <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dPsi<span class="sc">$</span>dose)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>substrate <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dPsi<span class="sc">$</span>substrate)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>geno <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dPsi<span class="sc">$</span>geno)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>gam_model <span class="ot">&lt;-</span> <span class="fu">gam</span>(y <span class="sc">~</span> dose<span class="sc">:</span>substrate<span class="sc">:</span>geno <span class="sc">+</span> <span class="fu">s</span>(pair, <span class="at">bs =</span> <span class="st">"re"</span>), <span class="at">data =</span> dPsi)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gam_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Family: gaussian 
@@ -537,11 +674,25 @@ GCV = 17.633  Scale est. = 16.758    n = 350</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gam_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gam_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="Dataanalysis_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+<p><img src="Dataanalysis_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Provide initial parameter estimates</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>initial_params <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">170</span>, <span class="at">b =</span> <span class="dv">120</span>, <span class="at">c =</span> <span class="sc">-</span><span class="fl">14.19</span>, <span class="at">d =</span> <span class="dv">6</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># not working, either if there's initial params or removed, nothing is working</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model with initial parameter estimates</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co">#self_start_model &lt;- nls(as.numeric(y) ~ SSfpl(as.numeric(dose), a, b, c, d)|geno, data = dPsi_GM, start = initial_params)</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a><span class="co">#selfstartmodel1 &lt;- nls(y~SSgompertz(as.numeric(dose), Asym=170, b2, b3)|geno, data=dPsi_GM)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>plot(density ~ log(conc), DNase.1, # xlim = c(0, 21), main = “SSgompertz() fit to DNase.1”) ux &lt;- par(“usr”)[1:2]; x &lt;- seq(ux[1], ux[2], length.out=250) lines(x, do.call(SSgompertz, c(list(x=x), coef(fm1))), col = “red”, lwd=2) As &lt;- coef(fm1)[[“Asym”]]; abline(v = 0, h = 0, lty = 3) axis(2, at= exp(-coef(fm1)[[“b2”]]), quote(e^{-b[2]}), las=1, pos=0)</p>
+</section>
 </section>
 
 </main>
