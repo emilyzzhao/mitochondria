@@ -183,14 +183,60 @@ dPsi$dose <- as.numeric(dPsi$dose)
 dPsi$substrate <- as.factor(dPsi$substrate)
 dPsi$geno <- as.factor(dPsi$geno)
 
-gam_model <- gam(y ~ dose:substrate:geno + s(pair, bs = "re"), data = dPsi)
-
-summary(gam_model)
+#gam_model <- gam(y ~ dose:substrate:geno + s(pair, bs = "re"), data = dPsi)
+#summary(gam_model)
 ```
 
 ```{r}
-plot(gam_model)
+# plot(gam_model)
 ```
+
+```{r}
+# Create new variable that combines geno and substrate
+dPsi$geno_substrate <- interaction(dPsi$geno, dPsi$substrate)
+
+# Check distribution of data
+table(dPsi$geno_substrate)
+
+# This model doesn't work (see notes below)
+#gam_model <- gam(y ~ s(dose, bs="tp", by=geno_substrate) + s(pair, bs="re"), data = dPsi) 
+
+length(unique(dPsi$dose))
+```
+
+Notes
+
+-   using `bs="tp"` (tensor product smoothing) leads to an error because there are only 5 unique "dose" values -\> leads to overfitting and error
+
+Reduce degrees of freedom to $k-1=3$ (`k=4`) to specify max number of basis functions
+
+-   the number of basis functions (4) shouldn't exceed the number of unique dose values (5)
+
+```{r}
+gam_model <- gam(y ~ s(dose, bs="tp", k=4, by=geno_substrate) + s(pair, bs="re"), data = dPsi)
+summary(gam_model)
+```
+
+Plot `gam_model`
+
+```{r}
+library(ggplot2)
+
+dPsi$fitted_values <- fitted(gam_model)
+
+# Scatter plot of original data
+p <- ggplot(dPsi, aes(x=dose, y=y, color=geno_substrate)) +
+  geom_point() +
+  theme_minimal() +
+  labs(title = "Effect of Dose by genotype-substrate", x = "Dose", y = "Response")
+
+# Overlay the fitted curve
+p + geom_line(aes(y=fitted_values), color="black")
+```
+
+------------------------------------------------------------------------
+
+### Graveyard
 
 ```{r}
 
