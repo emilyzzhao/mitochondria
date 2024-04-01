@@ -219,6 +219,8 @@ summary(gam_model)
 
 Plot `gam_model`
 
+-   notes: model looks very sketchy - will need diagnostics
+
 ```{r}
 library(ggplot2)
 
@@ -232,6 +234,35 @@ p <- ggplot(dPsi, aes(x=dose, y=y, color=geno_substrate)) +
 
 # Overlay the fitted curve
 p + geom_line(aes(y=fitted_values), color="black")
+```
+
+Model diagnostics: `gam_model`
+
+-   both plots indicate some sort of curve in the pattern of residuals for both fitted values and for predictors
+
+-   so maybe there's something about the data that the GAM isn't capturing?
+
+```{r}
+# residuals vs. fitted values
+dPsi$residuals <- residuals(gam_model)
+
+ggplot(dPsi, aes(x=fitted_values, y=residuals)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  labs(title = "Residuals vs Fitted Values", x = "Fitted Values", y = "Residuals")
+```
+
+```{r}
+# residuals vs. each predictor
+ggplot(dPsi, aes(x=dose, y=residuals)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  labs(title = "Residuals vs Dose", x = "Dose", y = "Residuals")
+
 ```
 
 ------------------------------------------------------------------------
