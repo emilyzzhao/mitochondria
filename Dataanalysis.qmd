@@ -98,7 +98,7 @@ model_GM <- lmer(y ~ geno:dose + (1|pair), data = dPsi_GM)
 
 summary(model_GM)
 
-model2 <- lmer(y ~ geno:dose:substrate + (1|pair), data = dPsi)
+model2 <- lmer(y ~ -1 + geno:dose:substrate + (1|pair), data = dPsi)
 
 summary(model2)
 
@@ -130,7 +130,7 @@ plot(model2)
 
 # 
 ```{r}
-model3 <- lmer(y~substrate:poly(dose,2):geno + (1|pair), data = dPsi)
+model3 <- lmer(y~ -1 + substrate:poly(dose,2):geno + (1|pair), data = dPsi)
 
 summary(model3)
 ```
@@ -147,7 +147,12 @@ dPsi$dose <- as.numeric(dPsi$dose)
 dPsi$substrate <- as.factor(dPsi$substrate)
 dPsi$geno <- as.factor(dPsi$geno)
 
-gam_model <- gam(y ~ dose:substrate:geno + s(pair, bs = "re"), data = dPsi)
+library(gamm4)
+
+dPsi$substrate_genotype <- paste(dPsi$substrate, dPsi$genotype, sep = "_")
+
+gamm_model <-gamm4(y ~ s(dose, by = substrate_genotype), data = dPsi)
+
 
 summary(gam_model)
 ```
@@ -155,6 +160,23 @@ summary(gam_model)
 ```{r}
 plot(gam_model)
 ```
+
+
+```{r}
+# dPsi_GM$dose <- as.numeric(dPsi_GM$dose)
+dPsi_GM$dose <- as.numeric(as.character(dPsi_GM$dose))
+
+
+```
+
+
+```{r}
+ggplot(data = dPsi_GM, aes(x = dose, y = y, color = geno)) +
+  geom_point() +
+  labs(x = "Dose", y = "y", title = "Scatterplot by Substrate with Trend Lines") +
+  theme_minimal()
+```
+
 
 
 ```{r}
