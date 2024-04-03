@@ -1,0 +1,32 @@
+---
+header-includes:
+  - \usepackage{titling}
+  - \pretitle{\vspace{-1.77cm}\begin{center}\Large}
+  - \posttitle{\end{center}}
+title: |
+  | dPsi Non-Linear Analysis
+author: "Joy Bao-Dai, Aimi Wen, Emily Zhao"
+geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
+fontsize: 11pt
+date: "2024-04-03"
+output:
+  pdf_document:
+    includes:
+      in_header: header.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = TRUE, message = TRUE, echo = TRUE)
+```
+
+
+```{r}
+
+library(tidyverse)
+library(data.table)
+library(ggplot2)
+library(purrr)
+library(dplyr)
+library(nlme)
+
+```

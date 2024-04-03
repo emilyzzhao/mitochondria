@@ -19,7 +19,6 @@ output:
 knitr::opts_chunk$set(warning = TRUE, message = TRUE, echo = TRUE)
 ```
 
-
 ```{r}
 
 library(tidyverse)
@@ -33,8 +32,9 @@ library(nlme)
 
 ```{r}
 
-load("~/projects/mitochondria/data/metabolicAssay.RData")
+#load("~/projects/mitochondria/data/metabolicAssay.RData")
 
+load("~/OneDrive - Duke University/* SPRING 2024/STA 470S/mitochondria/data/metabolicAssay.RData")
 
 dPsi <- dPsi[dPsi$dose != -12.95, ]
 
@@ -44,15 +44,14 @@ dPsi <- dPsi[!is.na(dPsi$y), ]
 
 ```
 
+### Visualizations
+
 ```{r}
 ggplot(dPsi, aes(x = dose, y = y, color = substrate)) +
   geom_point() +
   labs(x = "Dose", y = "dPsi",
        title = "Scatterplot of dPsi vs. Dose")
 ```
-
-
-
 
 ```{r}
 
@@ -75,7 +74,6 @@ dPsi_GM <- subset(dPsi, substrate == "PM")
 # pop.mod <- nls(y ~ SSlogis(dose, phi1, phi2, phi3), data = dPsi_Tg1)
 ```
 
-
 ```{r}
 
 ggplot(dPsi_GM, aes(x = dose, y = y, color = geno)) +
@@ -84,27 +82,25 @@ ggplot(dPsi_GM, aes(x = dose, y = y, color = geno)) +
        title = "Scatterplot of dPsi vs. Dose for substrate GM")
 ```
 
-
 ```{r}
 library(lme4)
 ```
 
+### Model specifications
 
 ```{r}
 
-model_GM <- lmer(y ~ geno:dose + (1|pair), data = dPsi_GM)
+model1 <- lmer(y ~ dose:substrate + (1|pair), data = dPsi)
 
 #model_PM <- lmer(y ~ geno:dose + (1|pair), data = dPsi_PM)
 
-summary(model_GM)
+summary(model1)
 
 model2 <- lmer(y ~ -1 + geno:dose:substrate + (1|pair), data = dPsi)
 
 summary(model2)
 
 library(car)
-
-
 
 ```
 
@@ -129,6 +125,7 @@ plot(model2)
 ```
 
 # 
+
 ```{r}
 model3 <- lmer(y~ -1 + substrate:poly(dose,2):geno + (1|pair), data = dPsi)
 
@@ -139,6 +136,45 @@ summary(model3)
 plot(model3)
 ```
 
+```{r}
+model4 <- lmer(y ~ -1 + substrate:poly(dose,2) + (1|pair), data = dPsi)
+summary(model4)
+```
+
+### pbkr
+
+```{r}
+# load package
+library(pbkrtest)
+```
+
+Model 1 vs. Model 2: model 2 wins
+
+```{r}
+# likelihood ratio test
+lrt_result_12 <- KRmodcomp(model2, model1)
+
+lrt_result_12
+```
+
+-   difference in \# of parameters between models (ndf) = 10
+
+-   p-value = \< 2.2e-16
+
+    -   highly significant -\> inclusion of geno term significantly improves fit of model over model1
+
+Model 3 vs. Model 4: model 3 wins
+
+```{r}
+lrt_result_34 <- KRmodcomp(model4, model3)
+lrt_result_34
+```
+
+-   p-value = \< 2.2e-16
+
+    -   highly significant -\> inclusion of gennotype term significantly improves fit of model over model1
+
+### GAM
 
 ```{r}
 library(mgcv)
@@ -147,6 +183,7 @@ dPsi$dose <- as.numeric(dPsi$dose)
 dPsi$substrate <- as.factor(dPsi$substrate)
 dPsi$geno <- as.factor(dPsi$geno)
 
+<<<<<<< HEAD
 library(gamm4)
 
 dPsi$substrate_genotype <- paste(dPsi$substrate, dPsi$genotype, sep = "_")
@@ -155,12 +192,93 @@ gamm_model <-gamm4(y ~ s(dose, by = substrate_genotype), data = dPsi)
 
 
 summary(gam_model)
+=======
+#gam_model <- gam(y ~ dose:substrate:geno + s(pair, bs = "re"), data = dPsi)
+#summary(gam_model)
+>>>>>>> e80a2bcf5c8b2cdf31f4bfe0e2a97d71001ef38e
 ```
 
 ```{r}
-plot(gam_model)
+# plot(gam_model)
 ```
 
+```{r}
+# Create new variable that combines geno and substrate
+dPsi$geno_substrate <- interaction(dPsi$geno, dPsi$substrate)
+
+# Check distribution of data
+table(dPsi$geno_substrate)
+
+# This model doesn't work (see notes below)
+#gam_model <- gam(y ~ s(dose, bs="tp", by=geno_substrate) + s(pair, bs="re"), data = dPsi) 
+
+length(unique(dPsi$dose))
+```
+
+Notes
+
+-   using `bs="tp"` (tensor product smoothing) leads to an error because there are only 5 unique "dose" values -\> leads to overfitting and error
+
+Reduce degrees of freedom to $k-1=3$ (`k=4`) to specify max number of basis functions
+
+-   the number of basis functions (4) shouldn't exceed the number of unique dose values (5)
+
+```{r}
+gam_model <- gam(y ~ s(dose, bs="tp", k=4, by=geno_substrate) + s(pair, bs="re"), data = dPsi)
+summary(gam_model)
+```
+
+Plot `gam_model`
+
+-   notes: model looks very sketchy - will need diagnostics
+
+```{r}
+library(ggplot2)
+
+dPsi$fitted_values <- fitted(gam_model)
+
+# Scatter plot of original data
+p <- ggplot(dPsi, aes(x=dose, y=y, color=geno_substrate)) +
+  geom_point() +
+  theme_minimal() +
+  labs(title = "Effect of Dose by genotype-substrate", x = "Dose", y = "Response")
+
+# Overlay the fitted curve
+p + geom_line(aes(y=fitted_values), color="black")
+```
+
+Model diagnostics: `gam_model`
+
+-   both plots indicate some sort of curve in the pattern of residuals for both fitted values and for predictors
+
+-   so maybe there's something about the data that the GAM isn't capturing?
+
+```{r}
+# residuals vs. fitted values
+dPsi$residuals <- residuals(gam_model)
+
+ggplot(dPsi, aes(x=fitted_values, y=residuals)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  labs(title = "Residuals vs Fitted Values", x = "Fitted Values", y = "Residuals")
+```
+
+```{r}
+# residuals vs. each predictor
+ggplot(dPsi, aes(x=dose, y=residuals)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  labs(title = "Residuals vs Dose", x = "Dose", y = "Residuals")
+
+```
+
+------------------------------------------------------------------------
+
+### Graveyard
 
 ```{r}
 # dPsi_GM$dose <- as.numeric(dPsi_GM$dose)
@@ -186,18 +304,13 @@ initial_params <- list(a = 170, b = 120, c = -14.19, d = 6)
 
 # not working, either if there's initial params or removed, nothing is working
 # Fit the model with initial parameter estimates
-self_start_model <- nls(as.numeric(y) ~ SSfpl(as.numeric(dose), a, b, c, d)|geno, data = dPsi_GM, start = initial_params)
+#self_start_model <- nls(as.numeric(y) ~ SSfpl(as.numeric(dose), a, b, c, d)|geno, data = dPsi_GM, start = initial_params)
 
 
 
-selfstartmodel1 <- nls(y~SSgompertz(as.numeric(dose), Asym=170, b2, b3)|geno, data=dPsi_GM)
+#selfstartmodel1 <- nls(y~SSgompertz(as.numeric(dose), Asym=170, b2, b3)|geno, data=dPsi_GM)
 
 
 ```
-plot(density ~ log(conc), DNase.1, # xlim = c(0, 21),
-     main = "SSgompertz() fit to DNase.1")
-ux <- par("usr")[1:2]; x <- seq(ux[1], ux[2], length.out=250)
-lines(x, do.call(SSgompertz, c(list(x=x), coef(fm1))), col = "red", lwd=2)
-As <- coef(fm1)[["Asym"]]; abline(v = 0, h = 0, lty = 3)
-axis(2, at= exp(-coef(fm1)[["b2"]]), quote(e^{-b[2]}), las=1, pos=0)
 
+plot(density \~ log(conc), DNase.1, \# xlim = c(0, 21), main = "SSgompertz() fit to DNase.1") ux \<- par("usr")\[1:2\]; x \<- seq(ux\[1\], ux\[2\], length.out=250) lines(x, do.call(SSgompertz, c(list(x=x), coef(fm1))), col = "red", lwd=2) As \<- coef(fm1)\[\["Asym"\]\]; abline(v = 0, h = 0, lty = 3) axis(2, at= exp(-coef(fm1)\[\["b2"\]\]), quote(e\^{-b\[2\]}), las=1, pos=0)
