@@ -38,7 +38,10 @@ dPsi <- dPsi[dPsi$dose != -12.95, ]
 
 dPsi <- dPsi[!is.na(dPsi$y), ]
 dPsi$dose <- as.numeric(dPsi$dose)
+
 dPsi$pair <- as.factor(dPsi$pair)
+
+dPsi$sub_geno <- interaction(dPsi$substrate, dPsi$geno)
 
 dPsi_GM <- subset(dPsi, substrate == "GM")
 
@@ -54,6 +57,8 @@ g
 
 ```{r}
 
+fit0 <- nls(y ~ SSmicmen(dose, Vm, K), data = dPsi)
+
 fit1 <- nls(y ~ SSmicmen(dose, Vm, K), data = dPsi_GM)
 
 g + stat_function(fun = SSmicmen, args = list(Vm = tidy(fit1)$estimate[1],
@@ -63,7 +68,7 @@ g + stat_function(fun = SSmicmen, args = list(Vm = tidy(fit1)$estimate[1],
 
 ```{r}
 
-fit2 <- nls(y ~ SSasymp(dose, init, m, plateau), data = dPsi_GM)
+fit1b <- nls(y ~ SSasymp(dose, init, m, plateau), data = dPsi_GM)
 
 
 # g + stat_function(fun = SSasymp, args = list(init = tidy(fit2)$estimate[1],
@@ -78,7 +83,7 @@ predictions <- data.frame(x = x_vals)
 
 # Use the predict function with your model and new data
 # Note: You might need to adjust this part to fit your specific model and data structure
-predictions$y <- predict(fit2, newdata = list(x = x_vals))
+predictions$y <- predict(fit1b, newdata = list(x = x_vals))
 
 g2 <- ggplot(dPsi_GM, aes(x = dose, y = y)) +
   geom_point() +  # Plot the original data points
@@ -103,17 +108,35 @@ plot(fit1, pair ~ resid(.), abline = 0)
 
 ```{r}
 
-fit3.nlsList <- nlsList(y ~ SSmicmen(dose, Vm, K)|substrate, data = dPsi)
 
-plot( fit3.nlsList, id = 0.05, adj = -1 ) # Figure 6.7
-qqnorm( fit3.nlsList, abline = c(0,1) ) #Figure 8.12
+fit2.nlsList <- nlsList(y ~ SSmicmen(dose, Vm, K)|substrate, data = dPsi)
 
-summary(fit3.nlsList)
+plot( fit2.nlsList, id = 0.05, adj = -1 ) 
+qqnorm( fit2.nlsList, abline = c(0,1) )
+
+summary(fit2.nlsList)
+
 
 
 ```
 
 ```{r}
+
+fit3.nlsList <- nlsList(y ~ SSmicmen(dose, Vm, K)|sub_geno, data = dPsi)
+
+plot( fit3.nlsList, id = 0.05, adj = -1 ) 
+qqnorm( fit3.nlsList, abline = c(0,1) )
+
+summary(fit3.nlsList)
+
+
+
+```
+
+```{r}
+
+fit2.nlme <- nlme(fit2.nlsList)
+summary(fit2.nlme)
 
 ## converting nlsList into nlme so we can add random effect later
 ## nlme output also indicates AIC/BIC values
@@ -125,15 +148,19 @@ summary(fit3.nlme)
 
 
 
-
 ```{r}
 
 typeof(dPsi$pair) 
+
+dPsi$pair <- as.factor(dPsi$pair)
 ## adding the random effect
 
-##trying to add the random effect but it currently says there's not meanin
-fit3.nlme <- update(fit3.nlme, groups = ~pair)
-summary(fit3.nlme)
+fit3.nlme.withrandom <- update(fit3.nlme, groups = ~pair, random = K~1) 
+
+anova(fit2.nlme, fit3.nlme)
+anova(fit3.nlme, fit3.nlme.withrandom)
+
+## anova p-value and larger AIC/BIC values show that random is needed
 
 ```
 
@@ -142,4 +169,37 @@ summary(fit3.nlme)
 
 # anova( fit3.nlme, fm2Indom.nlme ), page 284
 ```
+
+
+
+### Answering the actual questions in the prompt
+
+```{r}
+
+dPsi_GM$dose <- as.numeric(dPsi_GM$dose)
+
+fit2.nlsList_GM <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
+
+fit2.nlme_GM <- nlme(fit2.nlsList_GM)
+
+fit2.nlme_GM <- update(fit2.nlme_GM, fixed = list(Vm ~ 1, K ~ 1), groups = ~geno/pair, random = (K~1|geno/pair)) 
+summary(fit2.nlme_GM)
+
+
+fit_reduced <- nlme(fit2.nlsList_GM, groups = ~pair, random = K ~ 1, fixed = y ~ SSmicmen(dose, Vm, K))
+summary(fit_reduced)
+
+
+lrt <-anova(fit2.nlme_GM, fit_reduced)
+
+
+print(lrt)
+
+
+```
+
+
+
+
+
 
