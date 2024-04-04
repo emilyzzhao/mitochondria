@@ -29,8 +29,10 @@ library(purrr)
 library(dplyr)
 library(nlme)
 library(broom)
+library(kableExtra)
 
 ```
+
 
 ```{r}
 load("~/projects/mitochondria/data/metabolicAssay.RData")
@@ -63,7 +65,9 @@ fit1 <- nls(y ~ SSmicmen(dose, Vm, K), data = dPsi_GM)
 
 g + stat_function(fun = SSmicmen, args = list(Vm = tidy(fit1)$estimate[1],
                                        K=tidy(fit1)$estimate[2]), 
-                  colour = "darkgreen")
+                  colour = "darkgreen")+
+      ggtitle("Fitted Michaelis-Menten Model Against GM Substrate Data")
+
 ```
 
 ```{r}
@@ -88,34 +92,36 @@ predictions$y <- predict(fit1b, newdata = list(x = x_vals))
 g2 <- ggplot(dPsi_GM, aes(x = dose, y = y)) +
   geom_point() +  # Plot the original data points
   geom_smooth(data = predictions, aes(x = x, y = y), colour = "darkgreen") +  # Add the model curve
-  theme_minimal()
+  theme_minimal()+
+  ggtitle("Fitted Asymptotic Regression Model Against GM Substrate Data")
 
 g2
 ```
 
 
 ```{r}
-plot(fit1, geno ~ resid(.), abline = 0)
+plot(fit1b, geno ~ resid(.), abline = 0)
 
 # the residuals are mostly negative for NT and mostly positive for Tg giving strong evidence that a "genotype" effect should be included in the model
 ```
 
 ```{r}
-plot(fit1, pair ~ resid(.), abline = 0)
+plot(fit1b, pair ~ resid(.), abline = 0)
 
 #There does not seem to be a pattern correlation of pair and the response as the residuals are both positive and negative for all pairs, so we'll apply pair as a random effect if possible
 ```
 
-```{r}
+```{r, warning = FALSE}
 
 
 fit2.nlsList <- nlsList(y ~ SSmicmen(dose, Vm, K)|substrate, data = dPsi)
+fit2.nlme <- nlme(fit2.nlsList)
 
-plot( fit2.nlsList, id = 0.05, adj = -1 ) 
-qqnorm( fit2.nlsList, abline = c(0,1) )
 
-summary(fit2.nlsList)
+summary(fit2.nlme)
 
+plot(fit2.nlme)
+qqnorm( fit2.nlme, abline = c(0,1) )
 
 
 ```
@@ -135,12 +141,12 @@ summary(fit3.nlsList)
 
 ```{r}
 
-fit2.nlme <- nlme(fit2.nlsList)
-summary(fit2.nlme)
+
 
 ## converting nlsList into nlme so we can add random effect later
 ## nlme output also indicates AIC/BIC values
 fit3.nlme <- nlme(fit3.nlsList)
+fit3.nlme <- update(fit3.nlme, fixed = list(Vm ~ geno), groups = ~pair, random = K~1)
 summary(fit3.nlme)
 
 
@@ -150,18 +156,34 @@ summary(fit3.nlme)
 
 ```{r}
 
-typeof(dPsi$pair) 
 
 dPsi$pair <- as.factor(dPsi$pair)
 ## adding the random effect
 
-fit3.nlme.withrandom <- update(fit3.nlme, groups = ~pair, random = K~1) 
+fit3.nlme.withrandom <- update(fit3.nlme, fixed = list(Vm ~ geno), groups = ~pair, random = K~1) 
 
-anova(fit2.nlme, fit3.nlme)
+summary(fit3.nlme.withrandom)
+anova(fit2.nlme, fit3.nlme) # comparing model with genotype and substrate levels or just substrate grouping
+
+
+
 anova(fit3.nlme, fit3.nlme.withrandom)
 
 ## anova p-value and larger AIC/BIC values show that random is needed
 
+plot(fit3.nlme, form = ~geno*substrate)
+```
+
+```{r}
+plot(augPred(fit3.nlme, level = 0:1)) # Figure 8.11 + layout = c(5,1) 
+
+layout(matrix(1:5, 5, 1, byrow = TRUE))
+
+fit32 <- fit3.nlme
+
+
+ap <- augPred(fit32)
+plot(ap)
 ```
 
 ```{r}
@@ -174,23 +196,22 @@ anova(fit3.nlme, fit3.nlme.withrandom)
 
 ### Answering the actual questions in the prompt
 
+
 ```{r}
 
-dPsi_GM$dose <- as.numeric(dPsi_GM$dose)
-
-fit2.nlsList_GM <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
-
-fit2.nlme_GM <- nlme(fit2.nlsList_GM)
-
-fit2.nlme_GM <- update(fit2.nlme_GM, fixed = list(Vm ~ 1, K ~ 1), groups = ~geno/pair, random = (K~1|geno/pair)) 
-summary(fit2.nlme_GM)
+## Figuring out genotype vs. not genotype fixed effect
+nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
+fit_GM_geno <- nlme(nls_GM_geno)
+fit_GM_geno <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair)) 
+summary(fit_GM_geno)
 
 
-fit_reduced <- nlme(fit2.nlsList_GM, groups = ~pair, random = K ~ 1, fixed = y ~ SSmicmen(dose, Vm, K))
+fit_reduced <- nlme(nls_GM_geno, groups = ~pair, random = (K~1|pair), fixed = y ~ SSmicmen(dose, Vm, K))
+
 summary(fit_reduced)
 
 
-lrt <-anova(fit2.nlme_GM, fit_reduced)
+anova(fit_GM_geno, fit_reduced) 
 
 
 print(lrt)
@@ -199,6 +220,20 @@ print(lrt)
 ```
 
 
+```{r}
+
+## figuring out whether pair should be a fixed or random effect
+nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
+fit_GM_random <- nlme(nls_GM_geno)
+fit_GM_random <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair)) 
+
+
+fit_GM_fixed <- nlme(nls_GM_geno)
+summary(fit_GM_fixed)
+fit_GM_fixed <- update(fit_GM_fixed, fixed = list(Vm ~ geno), )
+
+
+```
 
 
 
