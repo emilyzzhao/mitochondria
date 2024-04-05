@@ -221,17 +221,26 @@ print(lrt)
 
 
 ```{r}
+#visualizing genotype with pair random effect
+
+
+
+```
+
+
+```{r}
 
 ## figuring out whether pair should be a fixed or random effect
 nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
 fit_GM_random <- nlme(nls_GM_geno)
 fit_GM_random <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair)) 
 
+summary(fit_GM_random)
+
 
 fit_GM_fixed <- nlme(nls_GM_geno)
 summary(fit_GM_fixed)
-fit_GM_fixed <- update(fit_GM_fixed, fixed = list(Vm ~ geno), )
-
+fit_GM_fixed <- update(fit_GM_fixed, fixed = list(Vm ~ geno, K ~ 1|pair))
 
 ```
 
