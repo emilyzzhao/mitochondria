@@ -190,19 +190,22 @@ plot(ap)
 ### Answering the actual questions in the prompt
 
 ```{r}
-
 ## Figuring out genotype vs. not genotype fixed effect
+# fit NLS model
 nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
+
+# fit NLME (nonlinear mixed effects model)
 fit_GM_geno <- nlme(nls_GM_geno)
-fit_GM_geno <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair)) 
+fit_GM_geno <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair)) # Vm varies w/ geno | group by pair | K varies across levels of pair
+
 summary(fit_GM_geno)
 
-
+# reduced fit_GM_geno without genotype as fixed effect
 fit_reduced <- nlme(nls_GM_geno, groups = ~pair, random = (K~1|pair), fixed = y ~ SSmicmen(dose, Vm, K))
 
 summary(fit_reduced)
 
-
+# model comparison using ANOVA
 anova(fit_GM_geno, fit_reduced) 
 
 
@@ -210,6 +213,8 @@ anova(fit_GM_geno, fit_reduced)
 
 
 ```
+
+-   based on ANOVA, `fit_GM_geno` is better because it has smaller AIC and BIC
 
 ### Trying to get Predicted out
 
@@ -224,15 +229,24 @@ ggplot(dPsi_GM, aes(x = dose,
   geom_line(aes(y = predicted_geno)) 
 ```
 
+-   notes on graph: still seems a little bit like an overfit -\> the model is using more of a connect-the-dots approach
+
+-   however, visually the difference between the two genotypes is pretty obvious, even though the model isn't the best fit
+
 ```{r}
 
 #visualizing genotype with pair random effect
 
 levels <- seq(2,6, by = 0.1)
 
-augmented_predictions <- augPred(fit_reduced, data = dPsi_GM)
+#augmented_predictions <- augPred(fit_reduced, data = dPsi_GM)
 
-#write a function and plot the values
+## alternative to augPred
+# Generate basic predictions
+basic_predictions <- predict(fit_reduced, newdata = dPsi_GM)
+
+# Manually merge or augment predictions as needed
+dPsi_GM$predictions <- basic_predictions
 
 
 # Extract model coefficients
@@ -284,6 +298,7 @@ predicted_values <- predict_SSmicmen(new_dose_values, coefficients)
 # Plot the predicted values
 plot(dPsi_GM$dose, dPsi_GM$y, type = "p", col = "blue", xlab = "Dose", ylab = "Response")
 lines(new_dose_values, predicted_values, col = "red")
+
 ```
 
 ```{r}
@@ -304,6 +319,10 @@ ggplot(dPsi_GM, aes(x = dose, y = y, color = geno)) +
   scale_color_manual(values = c("blue", "red")) +  # Set colors for genotypes
   theme_minimal()
 ```
+
+------------------------------------------------------------------------
+
+### Graveyard
 
 ```{r}
 
