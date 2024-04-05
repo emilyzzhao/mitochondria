@@ -1,0 +1,31 @@
+---
+title: "dose response curves"
+format: html
+editor: visual
+---
+
+## 
+
+```{r}
+load("data/metabolicAssay.RData")
+
+dPsi <- dPsi[dPsi$dose != -12.95, ]
+
+dPsi <- dPsi[!is.na(dPsi$y), ]
+dPsi$dose <- as.numeric(dPsi$dose)
+
+dPsi$pair <- as.factor(dPsi$pair)
+
+dPsi$sub_geno <- interaction(dPsi$substrate, dPsi$geno)
+```
+
+```{r}
+library(drc)
+```
+
+```{r}
+LL2.model.int <- with(dPsi, 
+                      drm(y ~dose + substrate,
+                          weights = pair, 
+                      fct = MM.2()))
+```
