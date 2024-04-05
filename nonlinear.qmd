@@ -223,6 +223,7 @@ print(lrt)
 ```{r}
 #visualizing genotype with pair random effect
 
+augmented_predictions <- augPred(fit_GM_geno, level = 0:1)
 
 
 ```
@@ -240,7 +241,7 @@ summary(fit_GM_random)
 
 fit_GM_fixed <- nlme(nls_GM_geno)
 summary(fit_GM_fixed)
-fit_GM_fixed <- update(fit_GM_fixed, fixed = list(Vm ~ geno, K ~ 1|pair))
+fit_GM_fixed <- update(fit_GM_fixed, fixed = list(Vm ~ geno, K ~ pair))
 
 ```
 
