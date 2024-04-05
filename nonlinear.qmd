@@ -19,7 +19,6 @@ output:
 knitr::opts_chunk$set(warning = TRUE, message = TRUE, echo = TRUE)
 ```
 
-
 ```{r}
 
 library(tidyverse)
@@ -33,9 +32,9 @@ library(kableExtra)
 
 ```
 
-
 ```{r}
-load("~/projects/mitochondria/data/metabolicAssay.RData")
+#load("~/projects/mitochondria/data/metabolicAssay.RData")
+load("data/metabolicAssay.RData")
 dPsi <- dPsi[dPsi$dose != -12.95, ]
 
 dPsi <- dPsi[!is.na(dPsi$y), ]
@@ -55,7 +54,6 @@ g <- ggplot(data = dPsi_GM, aes(x = dose, y = y)) + geom_point()
 g
 
 ```
-
 
 ```{r}
 
@@ -97,7 +95,6 @@ g2 <- ggplot(dPsi_GM, aes(x = dose, y = y)) +
 
 g2
 ```
-
 
 ```{r}
 plot(fit1b, geno ~ resid(.), abline = 0)
@@ -152,8 +149,6 @@ summary(fit3.nlme)
 
 ```
 
-
-
 ```{r}
 
 
@@ -192,10 +187,7 @@ plot(ap)
 # anova( fit3.nlme, fm2Indom.nlme ), page 284
 ```
 
-
-
 ### Answering the actual questions in the prompt
-
 
 ```{r}
 
@@ -214,25 +206,113 @@ summary(fit_reduced)
 anova(fit_GM_geno, fit_reduced) 
 
 
-print(lrt)
+#print(lrt)
 
 
 ```
 
+### Trying to get Predicted out
 
 ```{r}
-#visualizing genotype with pair random effect
+predicted_values <- predict(fit_GM_geno)
 
-augmented_predictions <- augPred(fit_GM_geno, level = 0:1)
+dPsi_GM$predicted_geno <- predicted_values
 
-
+ggplot(dPsi_GM, aes(x = dose, 
+                    color = geno)) + 
+  geom_point(aes(y = y)) + 
+  geom_line(aes(y = predicted_geno)) 
 ```
 
+```{r}
+
+#visualizing genotype with pair random effect
+
+levels <- seq(2,6, by = 0.1)
+
+augmented_predictions <- augPred(fit_reduced, data = dPsi_GM)
+
+#write a function and plot the values
+
+
+# Extract model coefficients
+coefficients <- fixef(fit_reduced)
+
+# Generate predictions
+dPsi_GM$predicted <- with(dPsi_GM, {
+  Vm_estimate <- coefficients["Vm"]  # Extract Vm coefficient
+  K_estimate <- coefficients["K"]    # Extract K coefficient
+  predicted <- SSmicmen(dose, Vm_estimate, K_estimate)
+  return(predicted)
+})
+```
+
+```{r}
+ggplot(dPsi_GM, aes(x = dose, y = y)) +
+  geom_point() +
+  geom_line(aes(y=predicted), color = "blue") +
+  labs(x = "Dose", 
+       y = "dPsi", 
+       title = "Predicted vs. Observed Values", 
+       subtitle = "For Model without Genotype") + 
+  theme_minimal()
+```
+
+```{r}
+# Extract coefficients from the model
+coefficients <- fixef(fit_GM_geno)
+
+# Define the function used for fitting the model
+SSmicmen <- function(dose, Vm, K) {
+  # Define the SSmicmen function using the extracted coefficients
+  # This function should match the one used in your model fitting process
+  Vm * dose / (K + dose)
+}
+
+# Define a function to make predictions
+predict_SSmicmen <- function(dose_values, coefficients) {
+
+  predictions <- SSmicmen(dose_values, coefficients["Vm"], coefficients["K"])
+  return(predictions)
+}
+
+new_dose_values <- seq(min(dPsi_GM$dose), max(dPsi_GM$dose), length.out = 100)
+
+# Make predictions
+predicted_values <- predict_SSmicmen(new_dose_values, coefficients)
+
+# Plot the predicted values
+plot(dPsi_GM$dose, dPsi_GM$y, type = "p", col = "blue", xlab = "Dose", ylab = "Response")
+lines(new_dose_values, predicted_values, col = "red")
+```
+
+```{r}
+# Create a dataframe with new dose values
+new_data <- data.frame(dose = new_dose_values)
+
+genotype_values <- rep(c('Tg', 'NT'), length.out = length(new_dose_values))
+new_data$geno <- genotype_values
+
+# Make predictions for the new data
+new_data$predicted <- predict(fit_GM_geno, newdata = new_data)
+
+# Plot the predicted values
+ggplot(dPsi_GM, aes(x = dose, y = y, color = geno)) +
+  geom_point() +
+  geom_line(data = new_data, aes(y = predicted)) +
+  labs(x = "Dose", y = "Response", title = "Predicted vs. Observed Values") +
+  scale_color_manual(values = c("blue", "red")) +  # Set colors for genotypes
+  theme_minimal()
+```
 
 ```{r}
 
 ## figuring out whether pair should be a fixed or random effect
 nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
+fit_GM_without_pair <- nlme(nls_GM_geno)
+
+coefficients(fit_GM_without_pair)
+
 fit_GM_random <- nlme(nls_GM_geno)
 fit_GM_random <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair)) 
 
@@ -243,8 +323,18 @@ fit_GM_fixed <- nlme(nls_GM_geno)
 summary(fit_GM_fixed)
 fit_GM_fixed <- update(fit_GM_fixed, fixed = list(Vm ~ geno, K ~ pair))
 
+#write a R function to fit the model
+
 ```
 
+```{r}
+mm.pair <- function(d= dose, V, k, p = pair){
+  num <- V*dose
+  denom <- K[p] + dose
+  return (num/denom)
+}
+```
 
-
-
+```{r}
+v.start
+```
