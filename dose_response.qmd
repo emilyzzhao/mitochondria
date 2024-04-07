@@ -20,16 +20,26 @@ dPsi$substrate <- as.factor(dPsi$substrate)
 dPsi$sub_geno <- interaction(dPsi$substrate, dPsi$geno)
 ```
 
-```{r}
+```{r echo=FALSE}
 library(drc)
 ```
 
 ```{r}
 LL2.model.int <- with(dPsi, 
                       drm(y ~ dose:substrate + (1|pair),
-                      fct = AR.3()))
-```
+                      fct = MM.2()))
 
-```{r}
+LL2.model.int <- drm(y ~ dose, data = dPsi, fct = MM.2(), subset = substrate)
+
+# Example initial estimates
+initial_estimate_vm <- max(dPsi$y)  # Maximum observed response as a proxy for Vm
+initial_estimate_k <- median(dPsi$dose)  # A rough guess that K is at the median dose
+
+# Using these estimates in nlme
+model <- nlme(y ~ MM.3(dose, Vm, K),
+              data = dPsi,
+              fixed = Vm + K ~ 1,
+              random = Vm ~ 1 | pair,
+              start = list(fixed = c(Vm = initial_estimate_vm, K = initial_estimate_k)))
 
 ```
