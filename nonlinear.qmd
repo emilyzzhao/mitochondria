@@ -302,40 +302,12 @@ lines(new_dose_values, predicted_values, col = "red")
 ```
 
 ```{r}
-# Create a dataframe with new dose values
-new_data <- data.frame(dose = new_dose_values)
-
-genotype_values <- rep(c('Tg', 'NT'), length.out = length(new_dose_values))
-new_data$geno <- genotype_values
 
 # Make predictions for the new data
-#new_data$predicted <- predict(fit_GM_geno, newdata = new_data) 
-  # doesn't work bc new_data does not have `pair` -> how is pair assigned in the data? 
+new_data <- dPsi_GM %>%
+  mutate(predicted = predict(fit_GM_geno, newdata = dPsi_GM))
 
-## For now: randomly assign `pair` value (1-6) BUT WE NEED TO FIX THIS**** 
-# Calculate base number of rows per pair (integer division)
-base_rows_per_pair = 100 %/% 6
-
-# Calculate the remainder to distribute among the pairs
-remainder = 100 %% 6
-
-# Create a vector with an equal number of each pair, adjusting the last pair to accommodate the remainder
-pair_values = c(rep(1, base_rows_per_pair),
-                rep(2, base_rows_per_pair),
-                rep(3, base_rows_per_pair),
-                rep(4, base_rows_per_pair),
-                rep(5, base_rows_per_pair),
-                rep(6, base_rows_per_pair + remainder))
-
-# Randomly shuffle the pair assignments to distribute them randomly across the dataset
-set.seed(123) # Setting a seed for reproducibility
-pair_values = sample(pair_values)
-
-# Assign to new_data
-new_data$pair <- pair_values
-
-# Make predictions for the new data
-new_data$predicted <- predict(fit_GM_geno, newdata = new_data) 
+augmented_predictions <- augPred(fit_GM_geno)
 
 # Plot the predicted values
 ggplot(dPsi_GM, aes(x = dose, y = y, color = geno)) +
