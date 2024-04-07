@@ -15,7 +15,8 @@ dPsi <- dPsi[!is.na(dPsi$y), ]
 dPsi$dose <- as.numeric(dPsi$dose)
 
 dPsi$pair <- as.factor(dPsi$pair)
-
+dPsi$geno <- as.factor(dPsi$geno)
+dPsi$substrate <- as.factor(dPsi$substrate)
 dPsi$sub_geno <- interaction(dPsi$substrate, dPsi$geno)
 ```
 
@@ -25,7 +26,10 @@ library(drc)
 
 ```{r}
 LL2.model.int <- with(dPsi, 
-                      drm(y ~dose + substrate,
-                          weights = pair, 
-                      fct = MM.2()))
+                      drm(y ~ dose:substrate + (1|pair),
+                      fct = AR.3()))
+```
+
+```{r}
+
 ```
