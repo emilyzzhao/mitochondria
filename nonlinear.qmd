@@ -216,6 +216,30 @@ anova(fit_GM_geno, fit_reduced)
 
 -   based on ANOVA, `fit_GM_geno` is better because it has smaller AIC and BIC
 
+### CODE DOESN'T WORK ADLFKJWEIFHES
+
+```{r}
+dPsi_GM.grp <- groupedData(y ~ dose | geno/pair, data = dPsi_GM)
+# Now, you can fit your mixed-effects model using the grouped data
+
+
+## Figuring out genotype vs. not genotype fixed effect
+# fit NLS model
+nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM.grp)
+
+# fit NLME (nonlinear mixed effects model)
+fit_GM_geno <- nlme(nls_GM_geno)
+fit_GM_geno <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair))
+
+
+
+fit_GM_geno <- nlme(y ~ SSmicmen(dose, Vm, K), 
+                    data = dPsi_GM.grp,
+                    fixed = list(Vm ~ geno),
+                    groups = ~pair,
+                    random = (K~1|pair))
+```
+
 ### Trying to get Predicted out
 
 ```{r}
