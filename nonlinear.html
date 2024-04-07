@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Joy Bao-Dai, Aimi Wen, Emily Zhao">
+<meta name="dcterms.date" content="2024-04-03">
+
+<title>quarto-input71a7b75b</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="nonlinear_files/libs/clipboard/clipboard.min.js"></script>
+<script src="nonlinear_files/libs/quarto-html/quarto.js"></script>
+<script src="nonlinear_files/libs/quarto-html/popper.min.js"></script>
+<script src="nonlinear_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="nonlinear_files/libs/quarto-html/anchor.min.js"></script>
+<link href="nonlinear_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="nonlinear_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="nonlinear_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="nonlinear_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="nonlinear_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+</head><body class="fullcontent">\usepackage{titling}
+\pretitle{\vspace{-1.77cm}\begin{center}\Large}
+\posttitle{\end{center}}
+
+
+
+
+
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><p>dPsi Non-Linear Analysis</p></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Joy Bao-Dai, Aimi Wen, Emily Zhao </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 3, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.3     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'
+
+The following objects are masked from 'package:lubridate':
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week,
+    yday, year
+
+The following objects are masked from 'package:dplyr':
+
+    between, first, last
+
+The following object is masked from 'package:purrr':
+
+    transpose</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'nlme'
+
+The following object is masked from 'package:dplyr':
+
+    collapse</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'
+
+The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load("~/projects/mitochondria/data/metabolicAssay.RData")</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/metabolicAssay.RData"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>dPsi <span class="ot">&lt;-</span> dPsi[dPsi<span class="sc">$</span>dose <span class="sc">!=</span> <span class="sc">-</span><span class="fl">12.95</span>, ]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>dPsi <span class="ot">&lt;-</span> dPsi[<span class="sc">!</span><span class="fu">is.na</span>(dPsi<span class="sc">$</span>y), ]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>dose <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(dPsi<span class="sc">$</span>dose)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>pair <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dPsi<span class="sc">$</span>pair)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>sub_geno <span class="ot">&lt;-</span> <span class="fu">interaction</span>(dPsi<span class="sc">$</span>substrate, dPsi<span class="sc">$</span>geno)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>dPsi_GM <span class="ot">&lt;-</span> <span class="fu">subset</span>(dPsi, substrate <span class="sc">==</span> <span class="st">"GM"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dPsi_GM, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>g</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit0 <span class="ot">&lt;-</span> <span class="fu">nls</span>(y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K), <span class="at">data =</span> dPsi)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">nls</span>(y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K), <span class="at">data =</span> dPsi_GM)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>g <span class="sc">+</span> <span class="fu">stat_function</span>(<span class="at">fun =</span> SSmicmen, <span class="at">args =</span> <span class="fu">list</span>(<span class="at">Vm =</span> <span class="fu">tidy</span>(fit1)<span class="sc">$</span>estimate[<span class="dv">1</span>],</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">K=</span><span class="fu">tidy</span>(fit1)<span class="sc">$</span>estimate[<span class="dv">2</span>]), </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">colour =</span> <span class="st">"darkgreen"</span>)<span class="sc">+</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="st">"Fitted Michaelis-Menten Model Against GM Substrate Data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fit1b <span class="ot">&lt;-</span> <span class="fu">nls</span>(y <span class="sc">~</span> <span class="fu">SSasymp</span>(dose, init, m, plateau), <span class="at">data =</span> dPsi_GM)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># g + stat_function(fun = SSasymp, args = list(init = tidy(fit2)$estimate[1],</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                                        m=tidy(fit2)$estimate[2], plateau=tidy(fit2)$estimate[3]),</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                   colour = "darkgreen")</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming your independent variable is named 'x'</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># x_vals &lt;- seq(min(dPsi_GM$dose), max(dPsi_GM$dose), length.out = 60)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>x_vals <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">2</span>, <span class="dv">12</span>), <span class="fu">rep</span>(<span class="dv">3</span>, <span class="dv">12</span>), <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">12</span>), <span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">12</span>), <span class="fu">rep</span>(<span class="dv">6</span>, <span class="dv">12</span>))</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x_vals)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the predict function with your model and new data</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: You might need to adjust this part to fit your specific model and data structure</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>predictions<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit1b, <span class="at">newdata =</span> <span class="fu">list</span>(<span class="at">x =</span> x_vals))</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>g2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dPsi_GM, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>  <span class="co"># Plot the original data points</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">colour =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span>  <span class="co"># Add the model curve</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Fitted Asymptotic Regression Model Against GM Substrate Data"</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>g2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit1b, geno <span class="sc">~</span> <span class="fu">resid</span>(.), <span class="at">abline =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the residuals are mostly negative for NT and mostly positive for Tg giving strong evidence that a "genotype" effect should be included in the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit1b, pair <span class="sc">~</span> <span class="fu">resid</span>(.), <span class="at">abline =</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#There does not seem to be a pattern correlation of pair and the response as the residuals are both positive and negative for all pairs, so we'll apply pair as a random effect if possible</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fit2.nlsList <span class="ot">&lt;-</span> <span class="fu">nlsList</span>(y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K)<span class="sc">|</span>substrate, <span class="at">data =</span> dPsi)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>fit2.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(fit2.nlsList)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit2.nlme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nonlinear mixed-effects model fit by maximum likelihood
+  Model: y ~ SSmicmen(dose, Vm, K) 
+  Data: dPsi 
+       AIC      BIC    logLik
+  2130.541 2153.689 -1059.271
+
+Random effects:
+ Formula: list(Vm ~ 1, K ~ 1)
+ Level: substrate
+ Structure: General positive-definite, Log-Cholesky parametrization
+         StdDev      Corr
+Vm       10.13794735 Vm  
+K         0.09514946 0.93
+Residual  4.75862064     
+
+Fixed effects:  list(Vm ~ 1, K ~ 1) 
+       Value Std.Error  DF  t-value p-value
+Vm 152.14883  4.220879 343 36.04672       0
+K    0.23682  0.042869 343  5.52420       0
+ Correlation: 
+  Vm   
+K 0.902
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-2.56334476 -0.53130604 -0.02830698  0.60815771  3.04725594 
+
+Number of Observations: 350
+Number of Groups: 6 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit2.nlme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>( fit2.nlme, <span class="at">abline =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit3.nlsList <span class="ot">&lt;-</span> <span class="fu">nlsList</span>(y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K)<span class="sc">|</span>sub_geno, <span class="at">data =</span> dPsi)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>( fit3.nlsList, <span class="at">id =</span> <span class="fl">0.05</span>, <span class="at">adj =</span> <span class="sc">-</span><span class="dv">1</span> ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>( fit3.nlsList, <span class="at">abline =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit3.nlsList)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+  Model: y ~ SSmicmen(dose, Vm, K) | sub_geno 
+   Data: dPsi 
+
+Coefficients:
+   Vm 
+        Estimate Std. Error  t value     Pr(&gt;|t|)
+GM.NT   156.2562   2.187800 71.42158 4.278441e-36
+PM.NT   148.0786   2.124755 69.69207 9.910048e-35
+PcM.NT  128.2702   2.116313 60.61021 6.494269e-30
+PMPc.NT 153.4929   2.153610 71.27237 1.977135e-29
+PMOc.NT 153.9070   2.173089 70.82405 4.530128e-31
+OcM.NT  146.1954   2.242393 65.19616 8.353088e-33
+GM.Tg   167.4049   2.348603 71.27851 1.852641e-29
+PM.Tg   157.4922   2.232508 70.54496 2.320128e-35
+PcM.Tg  133.1181   2.111829 63.03448 2.818257e-33
+PMPc.Tg 161.3958   2.244149 71.91849 6.498592e-33
+PMOc.Tg 165.2507   2.347730 70.38746 1.284108e-33
+OcM.Tg  155.9457   2.350680 66.34069 4.696674e-33
+   K 
+          Estimate Std. Error   t value     Pr(&gt;|t|)
+GM.NT   0.23950269 0.04973442 4.8156323 1.396746e-06
+PM.NT   0.18556348 0.04981722 3.7248861 1.768891e-04
+PcM.NT  0.01522105 0.05301675 0.2870988 7.004349e-01
+PMPc.NT 0.21035122 0.04923135 4.2727084 4.112339e-03
+PMOc.NT 0.22698845 0.04989209 4.5495874 6.499501e-04
+OcM.NT  0.28556929 0.05552568 5.1430134 8.367341e-06
+GM.Tg   0.37358214 0.05258862 7.1038585 1.572297e-05
+PM.Tg   0.27727116 0.05114270 5.4215198 4.281671e-07
+PcM.Tg  0.01151155 0.05088703 0.2262178 6.829857e-01
+PMPc.Tg 0.28704178 0.05036569 5.6991536 6.835700e-06
+PMOc.Tg 0.37286679 0.05323964 7.0035562 5.460110e-08
+OcM.Tg  0.37528267 0.05653997 6.6374753 1.165329e-07
+
+Residual standard error: 3.984201 on 326 degrees of freedom</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="do">## converting nlsList into nlme so we can add random effect later</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="do">## nlme output also indicates AIC/BIC values</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>fit3.nlme <span class="ot">&lt;-</span> <span class="fu">nlme</span>(fit3.nlsList)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>fit3.nlme <span class="ot">&lt;-</span> <span class="fu">update</span>(fit3.nlme, <span class="at">fixed =</span> <span class="fu">list</span>(Vm <span class="sc">~</span> geno), <span class="at">groups =</span> <span class="sc">~</span>pair, <span class="at">random =</span> K<span class="sc">~</span><span class="dv">1</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit3.nlme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nonlinear mixed-effects model fit by maximum likelihood
+  Model: y ~ SSmicmen(dose, Vm, K) 
+  Data: dPsi 
+       AIC      BIC    logLik
+  2428.484 2443.916 -1210.242
+
+Random effects:
+ Formula: K ~ 1 | pair
+                K Residual
+StdDev: 0.2308241 7.388762
+
+Fixed effects:  list(Vm ~ geno) 
+                   Value Std.Error  DF   t-value p-value
+Vm.(Intercept) 149.28266 1.2007546 343 124.32404       0
+Vm.genoTg        5.43314 0.8443486 343   6.43471       0
+ Correlation: 
+          Vm.(I)
+Vm.genoTg -0.312
+
+Standardized Within-Group Residuals:
+       Min         Q1        Med         Q3        Max 
+-2.5493175 -0.4568479  0.1368382  0.7214966  1.9001842 
+
+Number of Observations: 350
+Number of Groups: 6 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dPsi<span class="sc">$</span>pair <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(dPsi<span class="sc">$</span>pair)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="do">## adding the random effect</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>fit3.nlme.withrandom <span class="ot">&lt;-</span> <span class="fu">update</span>(fit3.nlme, <span class="at">fixed =</span> <span class="fu">list</span>(Vm <span class="sc">~</span> geno), <span class="at">groups =</span> <span class="sc">~</span>pair, <span class="at">random =</span> K<span class="sc">~</span><span class="dv">1</span>) </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit3.nlme.withrandom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nonlinear mixed-effects model fit by maximum likelihood
+  Model: y ~ SSmicmen(dose, Vm, K) 
+  Data: dPsi 
+       AIC      BIC    logLik
+  2428.484 2443.916 -1210.242
+
+Random effects:
+ Formula: K ~ 1 | pair
+                K Residual
+StdDev: 0.2308241 7.388762
+
+Fixed effects:  list(Vm ~ geno) 
+                   Value Std.Error  DF   t-value p-value
+Vm.(Intercept) 149.28266 1.2007546 343 124.32404       0
+Vm.genoTg        5.43314 0.8443486 343   6.43471       0
+ Correlation: 
+          Vm.(I)
+Vm.genoTg -0.312
+
+Standardized Within-Group Residuals:
+       Min         Q1        Med         Q3        Max 
+-2.5493175 -0.4568479  0.1368382  0.7214966  1.9001842 
+
+Number of Observations: 350
+Number of Groups: 6 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit2.nlme, fit3.nlme) <span class="co"># comparing model with genotype and substrate levels or just substrate grouping</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+fit2.nlme     1  6 2130.541 2153.689 -1059.271                        
+fit3.nlme     2  4 2428.484 2443.916 -1210.242 1 vs 2 301.9431  &lt;.0001</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit3.nlme, fit3.nlme.withrandom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     Model df      AIC      BIC    logLik
+fit3.nlme                1  4 2428.484 2443.916 -1210.242
+fit3.nlme.withrandom     2  4 2428.484 2443.916 -1210.242</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="do">## anova p-value and larger AIC/BIC values show that random is needed</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co">#plot(fit3.nlme, form = ~geno*substrate)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">augPred</span>(fit3.nlme, <span class="at">level =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)) <span class="co"># Figure 8.11 + layout = c(5,1) </span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">1</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>fit32 <span class="ot">&lt;-</span> fit3.nlme</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>ap <span class="ot">&lt;-</span> <span class="fu">augPred</span>(fit32)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># anova( fit3.nlme, fm2Indom.nlme ), page 284</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="answering-the-actual-questions-in-the-prompt" class="level3">
+<h3 class="anchored" data-anchor-id="answering-the-actual-questions-in-the-prompt">Answering the actual questions in the prompt</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Figuring out genotype vs. not genotype fixed effect</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fit NLS model</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>nls_GM_geno <span class="ot">&lt;-</span> <span class="fu">nlsList</span>(y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K)<span class="sc">|</span>geno, <span class="at">data =</span> dPsi_GM)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fit NLME (nonlinear mixed effects model)</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>fit_GM_geno <span class="ot">&lt;-</span> <span class="fu">nlme</span>(nls_GM_geno)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>fit_GM_geno <span class="ot">&lt;-</span> <span class="fu">update</span>(fit_GM_geno, <span class="at">fixed =</span> <span class="fu">list</span>(Vm <span class="sc">~</span> geno), <span class="at">groups =</span> <span class="sc">~</span>pair, <span class="at">random =</span> (K<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>pair)) <span class="co"># Vm varies w/ geno | group by pair | K varies across levels of pair</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_GM_geno)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nonlinear mixed-effects model fit by maximum likelihood
+  Model: y ~ SSmicmen(dose, Vm, K) 
+  Data: dPsi_GM 
+       AIC      BIC    logLik
+  348.6173 356.9947 -170.3087
+
+Random effects:
+ Formula: K ~ 1 | pair
+                K Residual
+StdDev: 0.3065193 3.215071
+
+Fixed effects:  list(Vm ~ geno) 
+                   Value Std.Error DF   t-value p-value
+Vm.(Intercept) 158.47282 1.3376742 53 118.46893       0
+Vm.genoTg        5.62613 0.9157648 53   6.14364       0
+ Correlation: 
+          Vm.(I)
+Vm.genoTg -0.302
+
+Standardized Within-Group Residuals:
+       Min         Q1        Med         Q3        Max 
+-2.1912620 -0.7416863 -0.1156655  0.7427093  1.9071265 
+
+Number of Observations: 60
+Number of Groups: 6 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reduced fit_GM_geno without genotype as fixed effect</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>fit_reduced <span class="ot">&lt;-</span> <span class="fu">nlme</span>(nls_GM_geno, <span class="at">groups =</span> <span class="sc">~</span>pair, <span class="at">random =</span> (K<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>pair), <span class="at">fixed =</span> y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in nlme.nlsList(nls_GM_geno, groups = ~pair, random = (K ~ 1 | pair), :
+'nlme.nlsList' will redefine 'fixed', 'data', and 'start'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_reduced)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nonlinear mixed-effects model fit by maximum likelihood
+  Model: y ~ SSmicmen(dose, Vm, K) 
+  Data: dPsi_GM 
+       AIC      BIC    logLik
+  361.1024 369.4798 -176.5512
+
+Random effects:
+ Formula: K ~ 1 | pair
+                K Residual
+StdDev: 0.0691316 4.214604
+
+Fixed effects:  list(Vm ~ 1, K ~ 1) 
+       Value Std.Error DF  t-value p-value
+Vm 161.75847 1.7219338 53 93.94001       0
+K    0.30671 0.0483116 53  6.34864       0
+ Correlation: 
+  Vm   
+K 0.754
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-1.65805098 -0.82490612 -0.01506359  0.66095926  1.88598285 
+
+Number of Observations: 60
+Number of Groups: 6 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model comparison using ANOVA</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_GM_geno, fit_reduced) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Model df      AIC      BIC    logLik
+fit_GM_geno     1  4 348.6173 356.9947 -170.3087
+fit_reduced     2  4 361.1024 369.4798 -176.5512</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">#print(lrt)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>based on ANOVA, <code>fit_GM_geno</code> is better because it has smaller AIC and BIC</li>
+</ul>
+</section>
+<section id="trying-to-get-predicted-out" class="level3">
+<h3 class="anchored" data-anchor-id="trying-to-get-predicted-out">Trying to get Predicted out</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>predicted_values <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_GM_geno)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>dPsi_GM<span class="sc">$</span>predicted_geno <span class="ot">&lt;-</span> predicted_values</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dPsi_GM, <span class="fu">aes</span>(<span class="at">x =</span> dose, </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> geno)) <span class="sc">+</span> </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> y)) <span class="sc">+</span> </span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> predicted_geno)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ul>
+<li><p>notes on graph: still seems a little bit like an overfit -&gt; the model is using more of a connect-the-dots approach</p></li>
+<li><p>however, visually the difference between the two genotypes is pretty obvious, even though the model isn’t the best fit</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing genotype with pair random effect</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>levels <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">6</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co">#augmented_predictions &lt;- augPred(fit_reduced, data = dPsi_GM)</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="do">## alternative to augPred</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate basic predictions</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>basic_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_reduced, <span class="at">newdata =</span> dPsi_GM)</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Manually merge or augment predictions as needed</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>dPsi_GM<span class="sc">$</span>predictions <span class="ot">&lt;-</span> basic_predictions</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract model coefficients</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>coefficients <span class="ot">&lt;-</span> <span class="fu">fixef</span>(fit_reduced)</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate predictions</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>dPsi_GM<span class="sc">$</span>predicted <span class="ot">&lt;-</span> <span class="fu">with</span>(dPsi_GM, {</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>  Vm_estimate <span class="ot">&lt;-</span> coefficients[<span class="st">"Vm"</span>]  <span class="co"># Extract Vm coefficient</span></span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>  K_estimate <span class="ot">&lt;-</span> coefficients[<span class="st">"K"</span>]    <span class="co"># Extract K coefficient</span></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>  predicted <span class="ot">&lt;-</span> <span class="fu">SSmicmen</span>(dose, Vm_estimate, K_estimate)</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(predicted)</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dPsi_GM, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>predicted), <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Dose"</span>, </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"dPsi"</span>, </span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Predicted vs. Observed Values"</span>, </span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"For Model without Genotype"</span>) <span class="sc">+</span> </span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract coefficients from the model</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>coefficients <span class="ot">&lt;-</span> <span class="fu">fixef</span>(fit_GM_geno)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the function used for fitting the model</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>SSmicmen <span class="ot">&lt;-</span> <span class="cf">function</span>(dose, Vm, K) {</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define the SSmicmen function using the extracted coefficients</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This function should match the one used in your model fitting process</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  Vm <span class="sc">*</span> dose <span class="sc">/</span> (K <span class="sc">+</span> dose)</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to make predictions</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>predict_SSmicmen <span class="ot">&lt;-</span> <span class="cf">function</span>(dose_values, coefficients) {</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  predictions <span class="ot">&lt;-</span> <span class="fu">SSmicmen</span>(dose_values, coefficients[<span class="st">"Vm"</span>], coefficients[<span class="st">"K"</span>])</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(predictions)</span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>new_dose_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(dPsi_GM<span class="sc">$</span>dose), <span class="fu">max</span>(dPsi_GM<span class="sc">$</span>dose), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>predicted_values <span class="ot">&lt;-</span> <span class="fu">predict_SSmicmen</span>(new_dose_values, coefficients)</span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the predicted values</span></span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(dPsi_GM<span class="sc">$</span>dose, dPsi_GM<span class="sc">$</span>y, <span class="at">type =</span> <span class="st">"p"</span>, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">xlab =</span> <span class="st">"Dose"</span>, <span class="at">ylab =</span> <span class="st">"Response"</span>)</span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(new_dose_values, predicted_values, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a dataframe with new dose values</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>new_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">dose =</span> new_dose_values)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>genotype_values <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'Tg'</span>, <span class="st">'NT'</span>), <span class="at">length.out =</span> <span class="fu">length</span>(new_dose_values))</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>new_data<span class="sc">$</span>geno <span class="ot">&lt;-</span> genotype_values</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions for the new data</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co">#new_data$predicted &lt;- predict(fit_GM_geno, newdata = new_data) </span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># doesn't work bc new_data does not have `pair` -&gt; how is pair assigned in the data? </span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="do">## For now: randomly assign `pair` value (1-6) BUT WE NEED TO FIX THIS**** </span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate base number of rows per pair (integer division)</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>base_rows_per_pair <span class="ot">=</span> <span class="dv">100</span> <span class="sc">%/%</span> <span class="dv">6</span></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the remainder to distribute among the pairs</span></span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>remainder <span class="ot">=</span> <span class="dv">100</span> <span class="sc">%%</span> <span class="dv">6</span></span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a vector with an equal number of each pair, adjusting the last pair to accommodate the remainder</span></span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>pair_values <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, base_rows_per_pair),</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>                <span class="fu">rep</span>(<span class="dv">2</span>, base_rows_per_pair),</span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>                <span class="fu">rep</span>(<span class="dv">3</span>, base_rows_per_pair),</span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>                <span class="fu">rep</span>(<span class="dv">4</span>, base_rows_per_pair),</span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>                <span class="fu">rep</span>(<span class="dv">5</span>, base_rows_per_pair),</span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a>                <span class="fu">rep</span>(<span class="dv">6</span>, base_rows_per_pair <span class="sc">+</span> remainder))</span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Randomly shuffle the pair assignments to distribute them randomly across the dataset</span></span>
+<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># Setting a seed for reproducibility</span></span>
+<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a>pair_values <span class="ot">=</span> <span class="fu">sample</span>(pair_values)</span>
+<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign to new_data</span></span>
+<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a>new_data<span class="sc">$</span>pair <span class="ot">&lt;-</span> pair_values</span>
+<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions for the new data</span></span>
+<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a>new_data<span class="sc">$</span>predicted <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_GM_geno, <span class="at">newdata =</span> new_data) </span>
+<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the predicted values</span></span>
+<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dPsi_GM, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y, <span class="at">color =</span> geno)) <span class="sc">+</span></span>
+<span id="cb50-38"><a href="#cb50-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb50-39"><a href="#cb50-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> new_data, <span class="fu">aes</span>(<span class="at">y =</span> predicted)) <span class="sc">+</span></span>
+<span id="cb50-40"><a href="#cb50-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Dose"</span>, <span class="at">y =</span> <span class="st">"Response"</span>, <span class="at">title =</span> <span class="st">"Predicted vs. Observed Values"</span>) <span class="sc">+</span></span>
+<span id="cb50-41"><a href="#cb50-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>)) <span class="sc">+</span>  <span class="co"># Set colors for genotypes</span></span>
+<span id="cb50-42"><a href="#cb50-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="nonlinear_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<hr>
+</section>
+<section id="graveyard" class="level3">
+<h3 class="anchored" data-anchor-id="graveyard">Graveyard</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">## figuring out whether pair should be a fixed or random effect</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>nls_GM_geno <span class="ot">&lt;-</span> <span class="fu">nlsList</span>(y <span class="sc">~</span> <span class="fu">SSmicmen</span>(dose, Vm, K)<span class="sc">|</span>geno, <span class="at">data =</span> dPsi_GM)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>fit_GM_without_pair <span class="ot">&lt;-</span> <span class="fu">nlme</span>(nls_GM_geno)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">coefficients</span>(fit_GM_without_pair)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>fit_GM_random <span class="ot">&lt;-</span> <span class="fu">nlme</span>(nls_GM_geno)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>fit_GM_random <span class="ot">&lt;-</span> <span class="fu">update</span>(fit_GM_geno, <span class="at">fixed =</span> <span class="fu">list</span>(Vm <span class="sc">~</span> geno), <span class="at">groups =</span> <span class="sc">~</span>pair, <span class="at">random =</span> (K<span class="sc">~</span><span class="dv">1</span><span class="sc">|</span>pair)) </span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_GM_random)</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>fit_GM_fixed <span class="ot">&lt;-</span> <span class="fu">nlme</span>(nls_GM_geno)</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_GM_fixed)</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>fit_GM_fixed <span class="ot">&lt;-</span> <span class="fu">update</span>(fit_GM_fixed, <span class="at">fixed =</span> <span class="fu">list</span>(Vm <span class="sc">~</span> geno, K <span class="sc">~</span> pair))</span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a><span class="co">#write a R function to fit the model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>mm.pair <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">d=</span> dose, V, k, <span class="at">p =</span> pair){</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  num <span class="ot">&lt;-</span> V<span class="sc">*</span>dose</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  denom <span class="ot">&lt;-</span> K[p] <span class="sc">+</span> dose</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (num<span class="sc">/</span>denom)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>v.start</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
