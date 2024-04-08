@@ -9,7 +9,7 @@
 <meta name="author" content="Joy Bao-Dai, Aimi Wen, Emily Zhao">
 <meta name="dcterms.date" content="2024-04-03">
 
-<title>quarto-inputc3b2c3d4</title>
+<title>quarto-input1edc0829</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -558,17 +558,14 @@ fit_reduced     2  4 361.1024 369.4798 -176.5512</code></pre>
 <span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>                    <span class="co">#random = (K~1|pair))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="trying-to-get-predicted-out" class="level3">
-<h3 class="anchored" data-anchor-id="trying-to-get-predicted-out">Trying to get Predicted out</h3>
+<section id="doing-ggplot-version" class="level3">
+<h3 class="anchored" data-anchor-id="doing-ggplot-version">Doing ggplot version</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>predicted_values <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit_GM_geno)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>dPsi_GM<span class="sc">$</span>predicted_geno <span class="ot">&lt;-</span> predicted_values</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dPsi_GM, <span class="fu">aes</span>(<span class="at">x =</span> dose, </span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> geno)) <span class="sc">+</span> </span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> y)) <span class="sc">+</span> </span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> predicted_geno)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(predictions_geno, <span class="fu">aes</span>(<span class="at">x =</span> dose, <span class="at">y =</span> y, <span class="at">color =</span> .groups)) <span class="sc">+</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Observed Responses by Dose and Genotype"</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Dose"</span>, <span class="at">y =</span> <span class="st">"Response"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="nonlinear_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
 </div>

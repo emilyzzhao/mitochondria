@@ -247,9 +247,18 @@ plot(predictions_geno)
                     #random = (K~1|pair))
 ```
 
-### Trying to get Predicted out
+### Doing ggplot version for augPred
 
 ```{r}
+# trying to do the augPred version but it's ugly
+ggplot(predictions_geno, aes(x = dose, y = y, color = .groups)) +
+  geom_point() +
+  geom_line() + 
+  labs(title = "Predicted vs. Observed Responses by Dose and Genotype",
+       x = "Dose", y = "Response", color="Genotype") +
+  theme_classic()
+
+# Old
 predicted_values <- predict(fit_GM_geno)
 
 dPsi_GM$predicted_geno <- predicted_values
@@ -258,6 +267,7 @@ ggplot(dPsi_GM, aes(x = dose,
                     color = geno)) + 
   geom_point(aes(y = y)) + 
   geom_line(aes(y = predicted_geno)) 
+
 ```
 
 -   notes on graph: still seems a little bit like an overfit -\> the model is using more of a connect-the-dots approach
