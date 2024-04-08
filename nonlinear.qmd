@@ -221,14 +221,11 @@ anova(fit_GM_geno, fit_reduced)
 ### Works but doesn't keep geno
 
 ```{r}
-
-start_values = list(Vm = 161.758, K = 0.307) #numbers pulled from the coefficients extracted from the fit reduced model 
+#numbers pulled from the coefficients extracted from the fit reduced model 
+start_values = list(Vm = 161.758, K = 0.307) 
 
 dPsi_GM.grp <- groupedData(y ~ dose | pair/geno, data = dPsi_GM)
-# Now, you can fit your mixed-effects model using the grouped data
 
-
-## Figuring out genotype vs. not genotype fixed effect
 # fit NLS model
 nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM.grp, start = start_values)
 
@@ -266,7 +263,9 @@ dPsi_GM$predicted_geno <- predicted_values
 ggplot(dPsi_GM, aes(x = dose, 
                     color = geno)) + 
   geom_point(aes(y = y)) + 
-  geom_line(aes(y = predicted_geno)) 
+  geom_line(aes(y = predicted_geno)) +
+  labs(title = "Predicted vs. Observed Responses by Dose and Genotype",
+       x = "Dose", y = "Response", color="Genotype")
 
 ```
 
