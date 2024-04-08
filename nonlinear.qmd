@@ -192,6 +192,8 @@ plot(ap)
 ```{r}
 ## Figuring out genotype vs. not genotype fixed effect
 # fit NLS model
+
+
 nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM)
 
 # fit NLME (nonlinear mixed effects model)
@@ -216,28 +218,33 @@ anova(fit_GM_geno, fit_reduced)
 
 -   based on ANOVA, `fit_GM_geno` is better because it has smaller AIC and BIC
 
-### CODE DOESN'T WORK ADLFKJWEIFHES
+### Works but doesn't keep geno
 
 ```{r}
-dPsi_GM.grp <- groupedData(y ~ dose | geno/pair, data = dPsi_GM)
+
+start_values = list(Vm = 161.758, K = 0.307) #numbers pulled from the coefficients extracted from the fit reduced model 
+
+dPsi_GM.grp <- groupedData(y ~ dose | pair/geno, data = dPsi_GM)
 # Now, you can fit your mixed-effects model using the grouped data
 
 
 ## Figuring out genotype vs. not genotype fixed effect
 # fit NLS model
-nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM.grp)
+nls_GM_geno <- nlsList(y ~ SSmicmen(dose, Vm, K)|geno, data = dPsi_GM.grp, start = start_values)
 
 # fit NLME (nonlinear mixed effects model)
 fit_GM_geno <- nlme(nls_GM_geno)
-fit_GM_geno <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~pair, random = (K~1|pair))
+fit_GM_geno <- update(fit_GM_geno, fixed = list(Vm ~ geno), groups = ~geno, random = (K~1|pair))
 
+predictions_geno <- augPred(fit_GM_geno)
 
+plot(predictions_geno)
 
-fit_GM_geno <- nlme(y ~ SSmicmen(dose, Vm, K), 
-                    data = dPsi_GM.grp,
-                    fixed = list(Vm ~ geno),
-                    groups = ~pair,
-                    random = (K~1|pair))
+#fit_GM_geno <- nlme(y ~ SSmicmen(dose, Vm, K), 
+                    #data = dPsi_GM.grp,
+                    #fixed = list(Vm ~ geno),
+                    #groups = ~pair,
+                    #random = (K~1|pair))
 ```
 
 ### Trying to get Predicted out
